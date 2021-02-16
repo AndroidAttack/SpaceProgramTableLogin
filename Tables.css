@@ -1,0 +1,34 @@
+body {
+    background-image: url("170717125723-03-aurora-borealis-0716-super-tease.jpg"); 
+}
+h1 {
+    vertical-align: text-top;
+    color:blueviolet;
+}
+.tableButton {
+    width: 100px;
+    height: 40px;
+    border-radius: 12px;
+    background-color: aqua;
+    color: black;
+    font-weight: bold;
+    /*I wanted to make the border thicker so I looked up border and assumed width meant the
+    border*/
+    border-width: thick;
+}
+.tableTimer {
+    font-family:'Times New Roman', Times, serif;
+    font-style: italic;
+    color:rgb(233, 157, 226);
+}
+h3 {
+    text-decoration: underline;
+  }
+.designTable {
+    background-color: lightblue;
+    border-color: black;
+}
+.classTable {
+    background-color: lightsteelblue;
+}
+

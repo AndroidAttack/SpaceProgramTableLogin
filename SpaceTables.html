@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<!--Andromeda M. de Anda, 2/13/2021, Est: 3 hrs., Actual:FOREVER BECAUSE I WORKED BACKWARDS AHHHH! x.x
+I should've looked at the final assignment and saw the zip file! I typed a lot of this manually, but I get
+most of it so far-->
+<html lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTables</title>
+<head>
+    <link rel="icon" href="icons.ico" type="image/x-icon" />  
+    <link rel="apple-touch-icon" href="images/hello-icon-152.png">   
+    <meta name="theme-color" content="white"/>  
+    <meta name="apple-mobile-web-app-capable" content="yes">  
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+    <meta name="apple-mobile-web-app-title" content="UAT Space Program"> 
+    <meta name="msapplication-TileImage" content="images/hello-icon-144.png">  
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <link rel="manifest" href="manifest.json">
+    <script src="main.js"></script>
+    <script src="sw.js"></script>
+    <script src="Tables.js"></script>
+    <script src="dataLoader-1.js"></script>
+    <link href="Tables.css"rel="stylesheet"type="text/css"/>
+    <!--I wanted to get rid of the white border of the picture and I stubbled upon
+    this website to get it off! https://www.w3schools.com/css/css3_images.asp-->
+    <style> img {
+        border-radius: 50%;
+    }
+    </style>
+
+</head>
+<body>
+    <!--I notice that the teacher used a table to aliagn the image
+    and Title! Nice :D-->
+ <p>
+    <table class="topOfTable">
+        <td>
+            <img src="UATspaceLogo-4.jpg"/> 
+        </td>
+        <td>
+            <h1>UAT Space Program</h1>
+        </td>
+    </table>
+    <br>
+ </p>
+
+    <!--this gives the table an ID and customizes the border-->
+    <table id="data" border="2" width="70%" class="classTable">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <thread>
+            <tr>
+                <th>Data Type</th>
+                <th>Reading</th>
+
+            </tr>
+        </thread>
+        <tbody style="color: #000;" style="font-weight: bolder;" class="designTable">
+            <tr id="seconds"></tr>
+            <tr id=latitude></tr>
+            <tr id=longitude></tr>
+            <tr id=gps_altitude></tr>
+            <tr id=bmpSensor_altitude></tr>
+            <tr id=bmpSensor_pressure></tr>
+            <tr id=bmpSensor_temp></tr>
+            <tr id=digSensor_temp></tr>
+            <tr id=cssSensor_temp></tr>
+            <tr id=cssSensor_eCO2></tr>
+            <tr id=cssSensor_TVOC></tr>
+            <tr id=UV></tr>
+            <tr id=accelX></tr>
+            <tr id=accelY></tr>
+            <tr id=accelZ></tr>
+            <tr id=magneticX></tr>
+            <tr id=magneticY></tr>
+            <tr id=magneticZ></tr>
+            <tr id=gyroX></tr>
+            <tr id=gyroY></tr>
+            <tr id=gyroZ></tr>
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <!--may as about this because I dont know why this is here for-->
+    <table class="tableTimer">
+        <td>
+            <img src="UATspaceLogo-4.jpg" width="40px"/> 
+        </td>
+        <td>
+            <h3>After Every five seconds...:</h3> 
+            <tbody>
+                <tr id="time">
+                    
+                </tr>
+            </tbody>
+        </td>
+    </table>
+    <br>
+    <br>
+    <!--another way to make buttons and specify them in a different way-->
+    <p>
+        <INPUT id="startButton" type="button" value="Start" onclick="start();" class="tableButton"/>
+        <INPUT id="stopButton" type="button" value="Stop" onclick="stop();" class="tableButton"/>
+    
+    </p>
+
+
+   
+</body>
+<script>
+    //Global variables are access inside of <head>
+    var theTime= new Date();
+    var tempTime= new Date();
+    var time_interval= 5000;
+    var last_iteration= 0;
+    var running= true;
+    var index= 0;
+    var timer;
+
+    //load data into array
+    var data = getData();
+
+    //function to load data and connected to start button
+    function updateDisplay() {
+        theTime= new Date();
+        //debugging...would like to understand more about this
+        console.log(
+            "Display : " + (theTime.getHours() < 10 ? "0" + theTime.getHours() : theTime.getHours())+
+            ":" + (theTime.getMinutes() < 10 ? "0" + theTime.getMinutes() : theTime.getMinutes())+
+            ":" + (theTime.getSeconds() < 10 ? "0" + theTime.getSeconds() : theTime.getSeconds())
+        );
+
+        //to update the table every 10 seconds
+        var timeRead= data[index].time_seconds;
+        if (timeRead >= 10) {
+            //this is saying to get the table named data with row seconds and it will be showing Time elasped in one column with
+            //value and units in other. The computer does this for all classifications called to display on named rows
+            document.getElementById("data").rows["seconds"].innerHTML = dataRow("Time elapsed", data[index].time_seconds, "seconds");
+            document.getElementById("data").rows["latitude"].innerHTML = dataRow("Latitude", data[index].latitude, " ");
+            document.getElementById("data").rows["longitude"].innerHTML = dataRow("Longltude", data[index].longitude," ");
+            document.getElementById("data").rows["gps_altitude"].innerHTML = dataRow("GPS Altitude", data[index].gps_altitude, " ");
+            document.getElementById("data").rows["bmpSensor_altitude"].innerHTML = dataRow("BMP Sensor Altitude", data[index].bmpSensor_altitude, "");
+            document.getElementById("data").rows["bmpSensor_pressure"].innerHTML = dataRow("BMP Sensor Pressure", data[index].bmpSensor_pressure, "");
+            document.getElementById("data").rows["bmpSensor_temp"].innerHTML = dataRow("BMP Sensor Temperature", data[index].bmpSensor_temp, "");
+            document.getElementById("data").rows["digSensor_temp"].innerHTML = dataRow("Digital Sensor Temperature",data[index].digSensor_temp, "");
+            document.getElementById("data").rows["cssSensor_temp"].innerHTML = dataRow("CSS Sensor Temperature", data[index].cssSensor_temp, "");
+            document.getElementById("data").rows["cssSensor_eCO2"].innerHTML = dataRow("CSS Sensor eCO2", data[index].cssSensor_eCO2, "");
+            document.getElementById("data").rows["cssSensor_TVOC"].innerHTML = dataRow("CSS Sensor TVOC", data[index].cssSensor_TVOC, "");
+            document.getElementById("data").rows["UV"].innerHTML = dataRow("UV", data[index].UV, " ");
+            document.getElementById("data").rows["accelX"].innerHTML = dataRow("Accel X", data[index].accelX, " ");
+            document.getElementById("data").rows["accelY"].innerHTML = dataRow("Accel Y", data[index].accelY, " ");
+            document.getElementById("data").rows["accelZ"].innerHTML = dataRow("Accel Z", data[index].accelZ, " ");
+            document.getElementById("data").rows["magneticX"].innerHTML = dataRow("Magnetic X", data[index].magneticX," ");
+            document.getElementById("data").rows["magneticY"].innerHTML = dataRow("Magnetic Y", data[index].magneticY," ");
+            document.getElementById("data").rows["magneticZ"].innerHTML = dataRow("Magnetic Z", data[index].magneticZ," ");
+            document.getElementById("data").rows["gyroX"].innerHTML = dataRow("Gyro X", data[index].gyroX, " ");
+            document.getElementById("data").rows["gyroY"].innerHTML = dataRow("Gyro Y", data[index].gyroY, " ");
+            document.getElementById("data").rows["gyroZ"].innerHTML = dataRow("Gyro Z", data[index].gyroZ, " ");
+
+            if (index < 499) {
+                index++;
+            } else {
+                index=0;
+            }
+        }
+        document.getElementById("time").innerHTML = (theTime.getHours() < 10 ? "0" + theTime.getHours() : theTime.getHours()) +
+            ":" + (theTime.getMinutes() < 10 ? "0" + theTime.getMinutes() : theTime.getMinutes()) +
+            ":" + (theTime.getSeconds() < 10 ? "0" + theTime.getSeconds() : theTime.getSeconds());
+    }
+    function start() {
+    document.getElementById("data").rows["seconds"].innerHTML = "Processing";
+    index= 0;
+    //this is to set an interval to change the display every 5 seconds
+    timer= setInterval(updateDisplay, time_interval);
+    document.getElementById("startButton").disabled= true;
+    document.getElementById("stopButton").disabled=false;
+    }
+    function stop() {
+    //we are clearing the timer and using an alert helps test if it really stops :P
+    clearInterval(timer);
+    document.getElementById("startButton").disabled=false;
+    document.getElementById("stopButton").disabled=true;
+    alert("function stop");
+    }
+</script>
+</html>
